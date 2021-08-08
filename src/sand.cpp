@@ -1,9 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <random>
 #include "SFML/Graphics.hpp"
 
-constexpr uint16_t gridSizeCols = 400;
-constexpr uint16_t gridSizeRows = 400;
+constexpr uint16_t gridSizeCols = 100;
+constexpr uint16_t gridSizeRows = 100;
 
 constexpr uint16_t screenWidth = 800;
 constexpr uint16_t screenHeight = 800;
@@ -31,14 +32,44 @@ public:
             for (size_t col = 0; col < gridSizeCols; col++)
             {
                 // Change next based on current
-                (*next)[row][col] = 1;
+                //(*next)[row][col] = 1;
 
                 /* Rules 
                 - if none is directly below: clear the current cell, activate the one below
                 - if directly below is blocked: check if left down is free or else if right down is free
-
-
                 */
+
+                if ((*curr)[row][col] == 0)
+                    continue;
+
+                if (row == gridSizeRows - 1)
+                {
+                    (*next)[row][col] = (*curr)[row][col];
+                    continue;
+                }
+
+                // Fall if possible
+                if ((*curr)[row + 1][col] == 0)
+                {
+                    (*curr)[row][col] = 0;
+                    (*next)[row + 1][col] = 1;
+                }
+                // Try slide left down
+                else if (col > 0 && (*curr)[row + 1][col - 1] == 0)
+                {
+                    (*curr)[row][col] = 0;
+                    (*next)[row + 1][col - 1] = 1;
+                }
+                // Try slide right down
+                else if (col < (gridSizeCols - 1) && (*curr)[row + 1][col + 1] == 0)
+                {
+                    (*curr)[row][col] = 0;
+                    (*next)[row + 1][col + 1] = 1;
+                }
+                else
+                {
+                    (*next)[row][col] = (*curr)[row][col];
+                }
             }
         }
     }
@@ -60,14 +91,22 @@ int main()
 
     // Window setup
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Sand Physics with Cellular Automata");
-    window.setFramerateLimit(10);
+    window.setFramerateLimit(120);
 
     // Rectangle to visualize cells
     sf::RectangleShape rect({cellWidth, cellHeight});
     rect.setFillColor(sf::Color::White);
 
+    uint64_t frameNum = 0;
+
     while (window.isOpen())
     {
+        frameNum++;
+        if (frameNum % 5 == 0)
+        {
+            (*grid.curr)[0][rand() % 10 + 45] = 1;
+        }
+
         sf::Event event;
         while (window.pollEvent(event))
         {
