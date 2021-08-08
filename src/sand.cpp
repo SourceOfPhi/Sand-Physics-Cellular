@@ -19,6 +19,7 @@ public:
              cellBuffer2(gridSizeRows, std::vector<uint8_t>(gridSizeCols)),
              curr(&cellBuffer1),
              next(&cellBuffer2){};
+
     std::vector<std::vector<uint8_t>> cellBuffer1;
     std::vector<std::vector<uint8_t>> cellBuffer2;
 
@@ -86,9 +87,6 @@ int main()
 {
     Grid grid;
 
-    std::cout << grid.cellBuffer1.size() << ' ' << grid.cellBuffer1[0].size() << '\n';
-    std::cout << +grid.cellBuffer1[17][0] << '\n';
-
     // Window setup
     sf::RenderWindow window(sf::VideoMode(screenWidth, screenHeight), "Sand Physics with Cellular Automata");
     window.setFramerateLimit(120);
@@ -99,6 +97,7 @@ int main()
 
     uint64_t frameNum = 0;
 
+    // Main loop
     while (window.isOpen())
     {
         frameNum++;
